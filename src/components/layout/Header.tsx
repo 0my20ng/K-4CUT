@@ -33,6 +33,9 @@ export default function Header() {
                                 <span className="text-xs font-mono text-secondary hidden md:block">
                                     {user.email}
                                 </span>
+                                <Link href="/mypage" className="text-sm font-bold tracking-wide hover:text-secondary transition-colors">
+                                    MY PAGE
+                                </Link>
                                 <button
                                     onClick={logout}
                                     className="text-sm font-bold tracking-wide hover:text-secondary transition-colors"
