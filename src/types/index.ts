@@ -24,4 +24,11 @@ export interface ImageMetadata {
     tags: string[];
     is_public: boolean;
     created_at: string;
+    // Optional fields from API
+    width?: number;
+    height?: number;
+    format?: string;
+    description?: string;
+    updated_at?: string;
+    user_id?: string;
 }

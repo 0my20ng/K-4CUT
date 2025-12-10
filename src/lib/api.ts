@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+    baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://api.k4cut.com/',
     headers: {
         'Content-Type': 'application/json',
     },
@@ -39,7 +39,7 @@ api.interceptors.response.use(
                     throw new Error('No refresh token');
                 }
 
-                const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/auth/refresh`, {
+                const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'https://api.k4cut.com/'}/api/v1/auth/refresh`, {
                     refresh_token: refreshToken,
                 });
 
