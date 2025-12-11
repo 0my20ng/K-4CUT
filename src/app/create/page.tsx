@@ -1,13 +1,20 @@
+/**
+ * @file create/page.tsx
+ * @description AI 네 컷 사진 생성을 위한 메인 페이지 컴포넌트입니다.
+ * 3단계 프로세스(사진 업로드 -> 포즈 선택 -> 결과 생성)를 관리합니다.
+ */
+
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import api from '@/lib/api';
-import { useAuth } from '@/context/AuthContext';
+import api from '@/lib/api'; // API 클라이언트
+import { useAuth } from '@/context/AuthContext'; // 인증 컨텍스트
 import { useRouter } from 'next/navigation';
-import { Upload, X, Camera, RefreshCw, Download, Check } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Upload, X, Camera, RefreshCw, Download, Check } from 'lucide-react'; // 아이콘 라이브러리
+import { cn } from '@/lib/utils'; // 클래스 이름 결합 유틸리티
 import Image from 'next/image';
 
+// 포즈 데이터 인터페이스 정의
 interface Pose {
     id: string;
     prompt_text: string;
@@ -15,32 +22,36 @@ interface Pose {
     description?: string;
 }
 
+/**
+ * CreatePage 컴포넌트
+ */
 export default function CreatePage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
+    // 현재 진행 단계 관리 (1: 업로드, 2: 포즈 선택, 3: 결과 확인)
     const [step, setStep] = useState(1);
 
-    // Step 1: Upload
-    const [files, setFiles] = useState<(File | null)[]>([null, null]);
-    const [previews, setPreviews] = useState<(string | null)[]>([null, null]);
-    const fileInputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
+    // --- Step 1: 업로드 관련 상태 ---
+    const [files, setFiles] = useState<(File | null)[]>([null, null]); // 업로드된 파일 객체 배열
+    const [previews, setPreviews] = useState<(string | null)[]>([null, null]); // 이미지 미리보기 URL 배열
+    const fileInputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)]; // 파일 입력 엘리먼트 참조
 
-    // Step 2: Poses
-    const [poses, setPoses] = useState<Pose[]>([]);
-    const [selectedPoseIds, setSelectedPoseIds] = useState<string[]>([]);
-    const [loadingPoses, setLoadingPoses] = useState(false);
+    // --- Step 2: 포즈 선택 관련 상태 ---
+    const [poses, setPoses] = useState<Pose[]>([]); // 불러온 포즈 목록
+    const [selectedPoseIds, setSelectedPoseIds] = useState<string[]>([]); // 선택된 포즈 ID 목록
+    const [loadingPoses, setLoadingPoses] = useState(false); // 포즈 로딩 상태
 
-    // Step 3: Generation
-    const [isGenerating, setIsGenerating] = useState(false);
-    const [resultImage, setResultImage] = useState<string | null>(null);
-    const [error, setError] = useState('');
+    // --- Step 3: 생성 결과 관련 상태 ---
+    const [isGenerating, setIsGenerating] = useState(false); // 생성 진행 중 여부
+    const [resultImage, setResultImage] = useState<string | null>(null); // 생성된 이미지 결과 (Base64 등)
+    const [error, setError] = useState(''); // 에러 메시지
 
-    // Auth Protection
+    // 인증 보호: 비로그인 사용자 리다이렉트
     useEffect(() => {
         if (!authLoading && !user) router.push('/login');
     }, [user, authLoading, router]);
 
-    // Fetch Poses
+    // 포즈 목록 불러오기 (Step 2 진입 시)
     useEffect(() => {
         const fetchPoses = async () => {
             setLoadingPoses(true);
@@ -56,7 +67,12 @@ export default function CreatePage() {
         if (step === 2) fetchPoses();
     }, [step]);
 
-    // Handlers
+    // --- 핸들러 함수들 ---
+
+    /**
+     * 파일 변경 핸들러
+     * 사용자가 이미지를 선택하면 상태를 업데이트하고 미리보기를 생성합니다.
+     */
     const handleFileChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -70,19 +86,26 @@ export default function CreatePage() {
         }
     };
 
+    /**
+     * 파일 제거 핸들러
+     */
     const removeFile = (index: number) => {
         const newFiles = [...files];
         newFiles[index] = null;
         setFiles(newFiles);
 
         const newPreviews = [...previews];
-        if (newPreviews[index]) URL.revokeObjectURL(newPreviews[index]!);
+        if (newPreviews[index]) URL.revokeObjectURL(newPreviews[index]!); // 메모리 누수 방지
         newPreviews[index] = null;
         setPreviews(newPreviews);
 
         if (fileInputRefs[index].current) fileInputRefs[index].current!.value = '';
     };
 
+    /**
+     * 포즈 선택 토글 핸들러
+     * 최대 4개까지 선택 가능하도록 제어합니다.
+     */
     const togglePose = (id: string) => {
         if (selectedPoseIds.includes(id)) {
             setSelectedPoseIds(prev => prev.filter(p => p !== id));
@@ -93,6 +116,10 @@ export default function CreatePage() {
         }
     };
 
+    /**
+     * 이미지 생성 요청 핸들러
+     * 파일과 선택된 포즈 정보를 서버로 전송하여 AI 이미지를 생성합니다.
+     */
     const generateImage = async () => {
         if (!files[0] || !files[1]) return;
         setIsGenerating(true);
@@ -103,48 +130,43 @@ export default function CreatePage() {
         formData.append('portrait1', files[0]);
         formData.append('portrait2', files[1]);
 
-        // If user selected 4 poses, send them. Otherwise let backend decide (random).
-        // The requirement says "Select pose". 
-        // If user selected 1-3, we can't send incomplete array if backend strictly needs 4 for that field.
-        // Spec says: "JSON array of 4 pose prompt IDs". 
-        // So if < 4, we shouldn't send it, or we should fill it?
-        // Let's assume if != 4, we don't send it and let backend random.
-        // Or we force user to select 4. 
-        // I'll make the UI force 4 selection OR 0 (Random).
+        // 포즈 ID가 4개 선택되었을 경우에만 전송, 아니면 백엔드에서 랜덤 처리하도록 함 (혹은 요구사항에 따라 달라질 수 있음)
         if (selectedPoseIds.length === 4) {
             formData.append('pose_prompt_ids', JSON.stringify(selectedPoseIds));
         }
 
         try {
-            // Use raw endpoint for direct bytes or normal for base64? 
-            // Normal endpoint returns base64 which is easy to handle.
+            // 생성 API 호출
+            // 타임아웃을 2분으로 설정하여 AI 생성 시간 확보
             const res = await api.post('/api/v1/gemini/generate/frame', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: 120000 // 2 minutes timeout for AI
+                timeout: 120000
             });
 
             if (res.data.image_base64) {
+                // 결과 이미지 설정 및 단계 이동
                 setResultImage(`data:${res.data.mime_type};base64,${res.data.image_base64}`);
-                setStep(3); // Result step
+                setStep(3);
             }
         } catch (err: unknown) {
             console.error(err);
+            // 에러 처리
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const errorResponse = (err as any).response;
-            setError(errorResponse?.data?.detail?.[0]?.msg || 'Generation failed. Please try again.');
+            setError(errorResponse?.data?.detail?.[0]?.msg || '이미지 생성에 실패했습니다. 다시 시도해주세요.');
             setIsGenerating(false);
         } finally {
             setIsGenerating(false);
         }
     };
 
-    // Render Helpers
+    // 로딩 중이거나 미인증 시 렌더링 안 함 (useEffect에서 리다이렉트 처리됨)
     if (authLoading) return null;
 
     return (
         <div className="max-w-4xl mx-auto min-h-[calc(100vh-8rem)] py-8 px-4 animate-in fade-in duration-500">
 
-            {/* Progress Indicator */}
+            {/* 단계 표시기 (Progress Indicator) */}
             <div className="flex justify-between items-center mb-12 relative">
                 <div className="absolute top-1/2 left-0 w-full h-px bg-secondary/20 -z-10" />
                 <div className={cn("bg-background px-4 font-mono text-sm", step >= 1 ? "text-primary font-bold" : "text-secondary")}>01 UPLOAD</div>
@@ -152,6 +174,7 @@ export default function CreatePage() {
                 <div className={cn("bg-background px-4 font-mono text-sm", step === 3 ? "text-primary font-bold" : "text-secondary")}>03 RESULT</div>
             </div>
 
+            {/* --- Step 1: 사진 업로드 화면 --- */}
             {step === 1 && (
                 <div className="space-y-8 text-center animate-in slide-in-from-bottom-4 duration-500">
                     <div className="space-y-2">
@@ -204,6 +227,7 @@ export default function CreatePage() {
                 </div>
             )}
 
+            {/* --- Step 2: 포즈 선택 화면 --- */}
             {step === 2 && (
                 <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
                     <div className="text-center space-y-2">
@@ -274,6 +298,7 @@ export default function CreatePage() {
                 </div>
             )}
 
+            {/* --- Step 3: 결과 화면 --- */}
             {step === 3 && resultImage && (
                 <div className="space-y-8 text-center animate-in zoom-in duration-500">
                     <div className="space-y-2">
