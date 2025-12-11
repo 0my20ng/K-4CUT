@@ -7,7 +7,7 @@ export default function Home() {
       {/* Hero Section */}
       <div className="space-y-12 max-w-5xl mx-auto px-4 w-full">
         <div className="relative inline-block">
-          <h1 className="text-8xl md:text-[10rem] font-black tracking-tighter leading-none select-none text-foreground">
+          <h1 className="text-6xl md:text-[10rem] font-black tracking-tighter leading-none select-none text-foreground">
             K4CUT
           </h1>
           <div className="absolute -bottom-4 md:-bottom-8 left-0 w-full h-1 md:h-2 bg-foreground"></div>
@@ -18,23 +18,27 @@ export default function Home() {
             당신의 순간, AI가 그리다.
           </h2>
           <p className="text-lg md:text-xl font-light text-secondary mx-auto tracking-wide leading-relaxed keep-all max-w-4xl">
-            스튜디오에 가지 않아도 괜찮습니다. 내 사진을 업로드하고 원하는 포즈 테마를 선택하세요.<br className="hidden md:block" />
-            최신 AI 기술이 당신의 이미지를 분석하여 자연스럽고 개성 넘치는 인생네컷을 생성해 드립니다.
+            스튜디오에 가지 않아도 괜찮습니다.<br className="block md:hidden cr-mobile-break" />
+            내 사진을 업로드하고<br className="block md:hidden" /> 원하는 포즈 테마를 선택하세요.
+            <br className="hidden md:block" />
+            <span className="block h-4 md:hidden" />
+            최신 AI 기술이 당신의 이미지를 분석하여<br className="block md:hidden" />
+            자연스럽고 개성 넘치는<br className="block md:hidden" /> 인생네컷을 생성해 드립니다.
           </p>
         </div>
       </div>
 
       {/* CTA Buttons */}
-      <div className="flex flex-col sm:flex-row gap-6 w-full max-w-md mx-auto">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-[80%] sm:w-full max-w-md mx-auto">
         <Link
           href="/create"
-          className="btn-primary text-center py-5 text-lg flex-1 shadow-none transition-all hover:bg-secondary/10 hover:text-primary border hover:border-primary"
+          className="btn-primary text-center py-4 md:py-5 text-base md:text-lg flex-1 shadow-none transition-all hover:bg-secondary/10 hover:text-primary border hover:border-primary"
         >
           START NOW
         </Link>
         <Link
           href="/gallery"
-          className="btn-secondary text-center py-5 text-lg flex-1"
+          className="btn-secondary text-center py-4 md:py-5 text-base md:text-lg flex-1"
         >
           GALLERY
         </Link>
@@ -43,7 +47,7 @@ export default function Home() {
       {/* How it Works Section */}
       <div className="w-full container-custom mt-20">
         <div className="border-t border-b border-border py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 text-center md:text-left">
             <div className="space-y-4">
               <span className="text-5xl font-black text-primary">01</span>
               <div>

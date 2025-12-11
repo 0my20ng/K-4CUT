@@ -103,8 +103,8 @@ export default function GalleryPage() {
 
     return (
         <div className="container-custom space-y-12 animate-in fade-in duration-500 relative py-12">
-            <div className="flex items-baseline justify-between border-b border-foreground pb-6">
-                <div className="flex items-center gap-4">
+            <div className="flex flex-col md:flex-row items-center md:items-baseline justify-between border-b border-foreground pb-6 gap-4 text-center md:text-left">
+                <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
                     <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">Gallery</h1>
                     <span className="text-secondary font-mono text-sm tracking-widest">{images.length} MEMORIES</span>
                 </div>

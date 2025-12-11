@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Upload, X, Camera, RefreshCw, Download, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import CameraModal from '@/components/ui/CameraModal';
 
 interface Pose {
     id: string;
@@ -24,6 +25,34 @@ export default function CreatePage() {
     const [files, setFiles] = useState<(File | null)[]>([null, null]);
     const [previews, setPreviews] = useState<(string | null)[]>([null, null]);
     const fileInputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
+
+    // Camera
+    const [isCameraOpen, setIsCameraOpen] = useState(false);
+    const [activeCameraIndex, setActiveCameraIndex] = useState<number | null>(null);
+
+    const openCamera = (index: number) => {
+        setActiveCameraIndex(index);
+        setIsCameraOpen(true);
+    };
+
+    const handleCameraCapture = (imageSrc: string) => {
+        if (activeCameraIndex === null) return;
+
+        // Convert base64 to File
+        fetch(imageSrc)
+            .then(res => res.blob())
+            .then(blob => {
+                const file = new File([blob], `camera-${Date.now()}.jpg`, { type: 'image/jpeg' });
+
+                const newFiles = [...files];
+                newFiles[activeCameraIndex] = file;
+                setFiles(newFiles);
+
+                const newPreviews = [...previews];
+                newPreviews[activeCameraIndex] = imageSrc;
+                setPreviews(newPreviews);
+            });
+    };
 
     // Step 2: Poses
     const [poses, setPoses] = useState<Pose[]>([]);
@@ -149,12 +178,12 @@ export default function CreatePage() {
         <div className="container-custom min-h-[calc(100vh-8rem)] py-12 animate-in fade-in duration-500">
 
             {/* Progress Indicator */}
-            <div className="flex justify-center items-center mb-16 space-x-4 md:space-x-12">
-                <div className={cn("text-sm tracking-widest uppercase transition-colors", step >= 1 ? "text-primary font-bold border-b-2 border-primary pb-1" : "text-secondary/40")}>01 Upload</div>
-                <div className="w-8 h-px bg-border hidden md:block" />
-                <div className={cn("text-sm tracking-widest uppercase transition-colors", step >= 2 ? "text-primary font-bold border-b-2 border-primary pb-1" : "text-secondary/40")}>02 Select</div>
-                <div className="w-8 h-px bg-border hidden md:block" />
-                <div className={cn("text-sm tracking-widest uppercase transition-colors", step === 3 ? "text-primary font-bold border-b-2 border-primary pb-1" : "text-secondary/40")}>03 Result</div>
+            <div className="flex justify-center items-center mb-12 md:mb-16 space-x-2 md:space-x-12">
+                <div className={cn("text-[10px] md:text-sm tracking-widest uppercase transition-colors", step >= 1 ? "text-primary font-bold border-b-2 border-primary pb-1" : "text-secondary/40")}>01 Upload</div>
+                <div className="w-4 md:w-8 h-px bg-border block" />
+                <div className={cn("text-[10px] md:text-sm tracking-widest uppercase transition-colors", step >= 2 ? "text-primary font-bold border-b-2 border-primary pb-1" : "text-secondary/40")}>02 Select</div>
+                <div className="w-4 md:w-8 h-px bg-border block" />
+                <div className={cn("text-[10px] md:text-sm tracking-widest uppercase transition-colors", step === 3 ? "text-primary font-bold border-b-2 border-primary pb-1" : "text-secondary/40")}>03 Result</div>
             </div>
 
             {step === 1 && (
@@ -178,13 +207,25 @@ export default function CreatePage() {
                                         </button>
                                     </>
                                 ) : (
-                                    <button
-                                        onClick={() => fileInputRefs[idx].current?.click()}
-                                        className="w-full h-full flex flex-col items-center justify-center gap-4 text-secondary group-hover:text-primary transition-colors"
-                                    >
-                                        <Camera size={32} strokeWidth={1.5} />
-                                        <span className="text-xs font-bold tracking-widest uppercase">Select Photo {idx + 1}</span>
-                                    </button>
+                                    <div className="w-full h-full flex flex-col items-center justify-center gap-4">
+                                        <span className="text-xs font-bold tracking-widest uppercase mb-2">Select Photo {idx + 1}</span>
+                                        <div className="flex flex-row gap-2 md:gap-4">
+                                            <button
+                                                onClick={() => fileInputRefs[idx].current?.click()}
+                                                className="flex flex-col items-center gap-2 p-3 md:p-4 border border-secondary/20 hover:border-primary hover:bg-secondary/5 transition-all w-20 md:w-24 aspect-square justify-center"
+                                            >
+                                                <Upload size={20} strokeWidth={1.5} className="md:w-6 md:h-6" />
+                                                <span className="text-[9px] md:text-[10px] font-bold tracking-wider uppercase">UPLOAD</span>
+                                            </button>
+                                            <button
+                                                onClick={() => openCamera(idx)}
+                                                className="flex flex-col items-center gap-2 p-3 md:p-4 border border-secondary/20 hover:border-primary hover:bg-secondary/5 transition-all w-20 md:w-24 aspect-square justify-center"
+                                            >
+                                                <Camera size={20} strokeWidth={1.5} className="md:w-6 md:h-6" />
+                                                <span className="text-[9px] md:text-[10px] font-bold tracking-wider uppercase">CAMERA</span>
+                                            </button>
+                                        </div>
+                                    </div>
                                 )}
                                 <input
                                     type="file"
@@ -354,6 +395,12 @@ export default function CreatePage() {
                     </div>
                 </div>
             )}
+
+            <CameraModal
+                isOpen={isCameraOpen}
+                onClose={() => setIsCameraOpen(false)}
+                onCapture={handleCameraCapture}
+            />
         </div>
     );
 }

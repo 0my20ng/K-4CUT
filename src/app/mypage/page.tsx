@@ -57,7 +57,7 @@ export default function MyPage() {
                     <p className="text-secondary font-light">계정 정보를 관리하세요.</p>
                 </div>
 
-                <div className="border border-border p-8 space-y-8 bg-white/50">
+                <div className="border border-border p-8 space-y-8 bg-white/50 text-center md:text-left">
                     <div>
                         <h2 className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Username</h2>
                         <div className="p-4 bg-secondary/5 border border-border text-lg font-mono">
