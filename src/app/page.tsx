@@ -23,7 +23,7 @@ export default function Home() {
             <br className="hidden md:block" />
             <span className="block h-4 md:hidden" />
             최신 AI 기술이 당신의 이미지를 분석하여<br className="block md:hidden" />
-            자연스럽고 개성 넘치는<br className="block md:hidden" /> 인생네컷을 생성해 드립니다.
+            자연스럽고 개성 넘치는<br className="block md:hidden" /> 네컷사진을 생성해 드립니다.
           </p>
         </div>
       </div>
