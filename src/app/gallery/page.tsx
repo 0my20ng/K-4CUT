@@ -76,7 +76,14 @@ export default function GalleryPage() {
     const handleDownload = async (e: React.MouseEvent, img: ImageMetadata) => {
         e.stopPropagation();
         try {
-            const response = await fetch(img.url);
+            // Use standard fetch to avoid adding Authorization headers (which trigger CORS preflight failure on R2)
+            const response = await fetch(img.url, {
+                method: 'GET',
+                // mode: 'cors', // Default is cors, we need it to read the blob
+            });
+
+            if (!response.ok) throw new Error('Network response was not ok');
+
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -88,8 +95,11 @@ export default function GalleryPage() {
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error('Download failed', error);
-            // Fallback for cross-origin or if fetch fails
-            window.open(img.url, '_blank');
+            alert('다운로드에 실패했습니다. (CORS 보안 정책으로 인해 브라우저에서 직접 다운로드가 차단되었습니다)');
+
+            // As a last resort fallback if blob fetch fails completely (strict CORS):
+            // We can try opening in new window but user dislikes "redirect".
+            // For now, let's stick to alert + console error so we know if it persists.
         }
     };
 

@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('accessToken', data.access_token);
         localStorage.setItem('refreshToken', data.refresh_token);
         refreshUser();
-        router.push('/gallery'); // Redirect to gallery after login
+        router.push('/'); // Redirect to home after login
     };
 
     const logout = () => {
