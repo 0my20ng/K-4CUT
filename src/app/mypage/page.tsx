@@ -48,31 +48,41 @@ export default function MyPage() {
         }
     };
 
+
     return (
-        <div className="min-h-[calc(100vh-4rem)] bg-background py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-2xl mx-auto space-y-8">
-                <div>
-                    <h1 className="text-3xl font-black tracking-tight">MY PAGE</h1>
-                    <p className="mt-2 text-secondary">계정 정보를 관리하세요.</p>
+        <div className="container-custom py-12 px-4 min-h-[calc(100vh-8rem)]">
+            <div className="max-w-xl mx-auto space-y-12">
+                <div className="text-center space-y-2">
+                    <h1 className="text-4xl font-black tracking-tight uppercase">My Profile</h1>
+                    <p className="text-secondary font-light">계정 정보를 관리하세요.</p>
                 </div>
 
-                <div className="bg-card rounded-2xl border border-secondary/20 p-8 space-y-6">
+                <div className="border border-border p-8 space-y-8 bg-white/50">
                     <div>
-                        <h2 className="text-lg font-bold mb-1">이메일</h2>
-                        <p className="font-mono text-secondary">{user.email}</p>
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Username</h2>
+                        <div className="p-4 bg-secondary/5 border border-border text-lg font-mono">
+                            {user.username || '설정되지 않음'}
+                        </div>
                     </div>
 
-                    <div className="pt-6 border-t border-secondary/10">
-                        <h2 className="text-lg font-bold text-red-500 mb-2">위험 구역</h2>
-                        <p className="text-sm text-secondary mb-4">
+                    <div>
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Email</h2>
+                        <div className="p-4 bg-secondary/5 border border-border text-lg font-mono">
+                            {user.email}
+                        </div>
+                    </div>
+
+                    <div className="pt-8 border-t border-border">
+                        <h2 className="text-xs font-bold text-red-500 uppercase tracking-widest mb-4">Danger Zone</h2>
+                        <p className="text-sm text-secondary mb-6 leading-relaxed">
                             계정을 삭제하면 모든 사진과 데이터가 영구적으로 삭제되며 복구할 수 없습니다.
                         </p>
                         <button
                             onClick={() => setIsDeleteModalOpen(true)}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-colors text-sm font-bold"
+                            className="w-full py-3 border border-red-200 text-red-500 hover:bg-red-50 transition-colors text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2"
                         >
                             <Trash2 className="w-4 h-4" />
-                            회원 탈퇴
+                            DELETE ACCOUNT
                         </button>
                     </div>
                 </div>
@@ -87,30 +97,30 @@ export default function MyPage() {
                     <>
                         <button
                             onClick={() => setIsDeleteModalOpen(false)}
-                            className="px-4 py-2 text-sm font-bold text-secondary hover:text-foreground transition-colors"
+                            className="px-6 py-2 text-sm font-bold text-secondary hover:text-foreground transition-colors uppercase tracking-widest"
                             disabled={isDeleting}
                         >
-                            취소
+                            CANCEL
                         </button>
                         <button
                             onClick={handleDeleteAccount}
-                            className="px-4 py-2 text-sm font-bold bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-6 py-2 text-sm font-bold bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest"
                             disabled={isDeleting}
                         >
-                            {isDeleting ? "탈퇴 처리 중..." : "확인 (탈퇴)"}
+                            {isDeleting ? "DELETING..." : "CONFIRM DELETE"}
                         </button>
                     </>
                 }
             >
-                <div className="space-y-3">
+                <div className="space-y-4 py-4">
                     <p className="text-foreground">
                         정말 탈퇴하시겠습니까?
                     </p>
                     <p className="text-secondary text-sm">
-                        생성한 모든 네컷 사진과 데이터가 <span className="text-red-500 font-bold">영구적으로 삭제</span>되며 복구할 수 없습니다.
+                        생성한 모든 네컷 사진과 데이터가 <span className="text-red-600 font-bold">영구적으로 삭제</span>되며 복구할 수 없습니다.
                     </p>
                     {error && (
-                        <p className="text-red-500 text-sm font-bold bg-red-500/10 p-3 rounded-lg">
+                        <p className="text-red-500 text-sm font-bold bg-red-50 p-3 border border-red-100">
                             {error}
                         </p>
                     )}

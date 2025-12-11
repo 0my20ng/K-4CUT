@@ -11,44 +11,44 @@ export default function Header() {
     const isAuthPage = pathname === '/login' || pathname === '/signup';
 
     return (
-        <header className="border-b border-secondary/20 bg-background/95 backdrop-blur-sm sticky top-0 z-50">
-            <div className="container-custom h-16 flex items-center justify-between">
-                <Link href="/" className="text-2xl font-black tracking-tighter hover:opacity-80 transition-opacity">
-                    K4CUT .
+        <header className="border-b border-border bg-background sticky top-0 z-50">
+            <div className="container-custom h-20 flex items-center justify-between">
+                <Link href="/" className="text-3xl font-black tracking-tighter hover:opacity-80 transition-opacity">
+                    K4CUT
                 </Link>
 
                 {!isAuthPage && (
-                    <nav className="flex items-center gap-6 md:gap-8">
-                        <Link href="/gallery" className="text-sm font-bold tracking-wide hover:text-secondary transition-colors">
+                    <nav className="flex items-center gap-4">
+                        <Link href="/gallery" className="btn-secondary text-sm px-4 py-2 border-primary hover:bg-primary hover:text-white transition-colors">
                             GALLERY
                         </Link>
-                        <Link href="/create" className="text-sm font-bold tracking-wide hover:text-secondary transition-colors">
-                            PHOTO BOOTH
+                        <Link href="/create" className="btn-primary text-sm px-4 py-2">
+                            GENERATE
                         </Link>
 
-                        <div className="h-4 w-px bg-secondary/20" />
+                        <div className="h-4 w-px bg-border mx-2" />
 
                         {user ? (
                             <div className="flex items-center gap-4">
-                                <span className="text-xs font-mono text-secondary hidden md:block">
-                                    {user.email}
+                                <span className="text-xs font-mono text-primary font-bold hidden md:block">
+                                    {(user.username || user.email)}
                                 </span>
-                                <Link href="/mypage" className="text-sm font-bold tracking-wide hover:text-secondary transition-colors">
+                                <Link href="/mypage" className="btn-secondary text-sm px-4 py-2 border-primary hover:bg-primary hover:text-white transition-colors">
                                     MY PAGE
                                 </Link>
                                 <button
                                     onClick={logout}
-                                    className="text-sm font-bold tracking-wide hover:text-secondary transition-colors"
+                                    className="btn-secondary text-sm px-4 py-2 border-primary hover:bg-primary hover:text-white transition-colors"
                                 >
                                     LOGOUT
                                 </button>
                             </div>
                         ) : (
                             <div className="flex items-center gap-4">
-                                <Link href="/login" className="text-sm font-bold tracking-wide hover:text-secondary transition-colors">
+                                <Link href="/login" className="btn-secondary text-sm px-4 py-2 border-primary hover:bg-primary hover:text-white transition-colors">
                                     LOGIN
                                 </Link>
-                                <Link href="/signup" className="btn-primary text-sm">
+                                <Link href="/signup" className="btn-primary text-sm px-4 py-2">
                                     SIGN UP
                                 </Link>
                             </div>

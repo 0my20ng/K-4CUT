@@ -35,6 +35,9 @@ export default function CreatePage() {
     const [resultImage, setResultImage] = useState<string | null>(null);
     const [error, setError] = useState('');
 
+    // Model Selection
+    const [model, setModel] = useState<'default' | 'pro'>('default');
+
     // Auth Protection
     useEffect(() => {
         if (!authLoading && !user) router.push('/login');
@@ -102,6 +105,7 @@ export default function CreatePage() {
         const formData = new FormData();
         formData.append('portrait1', files[0]);
         formData.append('portrait2', files[1]);
+        formData.append('model', model);
 
         // If user selected 4 poses, send them. Otherwise let backend decide (random).
         // The requirement says "Select pose". 
@@ -142,32 +146,33 @@ export default function CreatePage() {
     if (authLoading) return null;
 
     return (
-        <div className="max-w-4xl mx-auto min-h-[calc(100vh-8rem)] py-8 px-4 animate-in fade-in duration-500">
+        <div className="container-custom min-h-[calc(100vh-8rem)] py-12 animate-in fade-in duration-500">
 
             {/* Progress Indicator */}
-            <div className="flex justify-between items-center mb-12 relative">
-                <div className="absolute top-1/2 left-0 w-full h-px bg-secondary/20 -z-10" />
-                <div className={cn("bg-background px-4 font-mono text-sm", step >= 1 ? "text-primary font-bold" : "text-secondary")}>01 UPLOAD</div>
-                <div className={cn("bg-background px-4 font-mono text-sm", step >= 2 ? "text-primary font-bold" : "text-secondary")}>02 POSE</div>
-                <div className={cn("bg-background px-4 font-mono text-sm", step === 3 ? "text-primary font-bold" : "text-secondary")}>03 RESULT</div>
+            <div className="flex justify-center items-center mb-16 space-x-4 md:space-x-12">
+                <div className={cn("text-sm tracking-widest uppercase transition-colors", step >= 1 ? "text-primary font-bold border-b-2 border-primary pb-1" : "text-secondary/40")}>01 Upload</div>
+                <div className="w-8 h-px bg-border hidden md:block" />
+                <div className={cn("text-sm tracking-widest uppercase transition-colors", step >= 2 ? "text-primary font-bold border-b-2 border-primary pb-1" : "text-secondary/40")}>02 Select</div>
+                <div className="w-8 h-px bg-border hidden md:block" />
+                <div className={cn("text-sm tracking-widest uppercase transition-colors", step === 3 ? "text-primary font-bold border-b-2 border-primary pb-1" : "text-secondary/40")}>03 Result</div>
             </div>
 
             {step === 1 && (
-                <div className="space-y-8 text-center animate-in slide-in-from-bottom-4 duration-500">
-                    <div className="space-y-2">
-                        <h2 className="text-3xl font-black">UPLOAD PORTRAITS</h2>
-                        <p className="text-secondary">Select two photos to star in your 4-Cut</p>
+                <div className="space-y-12 text-center animate-in slide-in-from-bottom-4 duration-500">
+                    <div className="space-y-4">
+                        <h2 className="text-4xl font-black uppercase tracking-tight">Upload Photos</h2>
+                        <p className="text-secondary font-light">두 장의 사진을 업로드하세요.</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
                         {[0, 1].map((idx) => (
-                            <div key={idx} className="aspect-[3/4] relative border-2 border-dashed border-secondary/30 rounded-sm hover:border-primary transition-colors flex flex-col items-center justify-center bg-secondary/5 group">
+                            <div key={idx} className="aspect-[3/4] relative border border-dashed border-secondary/30 hover:border-primary transition-colors flex flex-col items-center justify-center bg-secondary/5 group rounded-none">
                                 {previews[idx] ? (
                                     <>
-                                        <Image src={previews[idx]!} alt={`Preview ${idx}`} fill unoptimized className="object-cover rounded-sm" />
+                                        <Image src={previews[idx]!} alt={`Preview ${idx}`} fill unoptimized className="object-cover" />
                                         <button
                                             onClick={() => removeFile(idx)}
-                                            className="absolute top-2 right-2 p-1 bg-black/50 text-white rounded-full hover:bg-black transition-colors"
+                                            className="absolute top-2 right-2 p-2 bg-black text-white hover:opacity-80 transition-opacity"
                                         >
                                             <X size={16} />
                                         </button>
@@ -177,8 +182,8 @@ export default function CreatePage() {
                                         onClick={() => fileInputRefs[idx].current?.click()}
                                         className="w-full h-full flex flex-col items-center justify-center gap-4 text-secondary group-hover:text-primary transition-colors"
                                     >
-                                        <Camera size={48} strokeWidth={1} />
-                                        <span className="text-sm font-bold tracking-widest uppercase">Select Photo {idx + 1}</span>
+                                        <Camera size={32} strokeWidth={1.5} />
+                                        <span className="text-xs font-bold tracking-widest uppercase">Select Photo {idx + 1}</span>
                                     </button>
                                 )}
                                 <input
@@ -192,27 +197,54 @@ export default function CreatePage() {
                         ))}
                     </div>
 
-                    <div className="pt-8">
+                    <div className="max-w-2xl mx-auto mt-12 grid grid-cols-2 gap-6">
+                        <button
+                            onClick={() => setModel('default')}
+                            className={cn(
+                                "flex flex-col items-center p-6 border transition-all duration-300 rounded-none",
+                                model === 'default'
+                                    ? "border-primary bg-primary text-background"
+                                    : "border-border hover:border-primary text-secondary hover:text-primary"
+                            )}
+                        >
+                            <span className="text-xl font-bold tracking-wider mb-2">DEFAULT</span>
+                            <span className="text-xs opacity-70">빠른 생성 속도</span>
+                        </button>
+                        <button
+                            onClick={() => setModel('pro')}
+                            className={cn(
+                                "flex flex-col items-center p-6 border transition-all duration-300 rounded-none",
+                                model === 'pro'
+                                    ? "border-primary bg-primary text-background"
+                                    : "border-border hover:border-primary text-secondary hover:text-primary"
+                            )}
+                        >
+                            <span className="text-xl font-bold tracking-wider mb-2">PRO</span>
+                            <span className="text-xs opacity-70">높은 퀄리티</span>
+                        </button>
+                    </div>
+
+                    <div className="pt-12">
                         <button
                             onClick={() => setStep(2)}
                             disabled={!files[0] || !files[1]}
-                            className="btn-primary w-64 h-12 text-sm uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="btn-primary w-full max-w-xs h-14 text-sm"
                         >
-                            Next Step
+                            다음 단계
                         </button>
                     </div>
                 </div>
             )}
 
             {step === 2 && (
-                <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
-                    <div className="text-center space-y-2">
-                        <h2 className="text-3xl font-black">SELECT POSES</h2>
-                        <p className="text-secondary">
-                            Select exactly 4 poses or skip to let AI decide randomly.
+                <div className="space-y-12 animate-in slide-in-from-bottom-4 duration-500">
+                    <div className="text-center space-y-4">
+                        <h2 className="text-4xl font-black uppercase tracking-tight">Select Poses</h2>
+                        <p className="text-secondary font-light">
+                            4개의 포즈를 선택하거나, 건너뛰어 AI가 랜덤하게 선택하게 하세요.
                             <br />
-                            <span className={cn("text-xs font-bold", selectedPoseIds.length === 4 ? "text-primary" : "text-secondary")}>
-                                {selectedPoseIds.length} / 4 Selected
+                            <span className={cn("text-xs font-bold mt-2 block", selectedPoseIds.length === 4 ? "text-primary" : "text-secondary")}>
+                                {selectedPoseIds.length} / 4 SELECTED
                             </span>
                         </p>
                     </div>
@@ -220,21 +252,25 @@ export default function CreatePage() {
                     {loadingPoses ? (
                         <div className="flex justify-center py-20"><RefreshCw className="animate-spin text-secondary" /></div>
                     ) : (
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                             {poses.map(pose => (
                                 <div
                                     key={pose.id}
                                     onClick={() => togglePose(pose.id)}
                                     className={cn(
-                                        "p-4 border border-secondary/20 rounded-sm cursor-pointer transition-all hover:bg-secondary/5 relative",
-                                        selectedPoseIds.includes(pose.id) ? "border-primary bg-primary/5" : ""
+                                        "p-6 border cursor-pointer transition-all relative rounded-none flex flex-col justify-between min-h-[140px]",
+                                        selectedPoseIds.includes(pose.id) ? "border-primary bg-primary text-white" : "border-border hover:border-primary text-primary"
                                     )}
                                 >
-                                    <h3 className="font-bold text-xs uppercase mb-1">{pose.category || 'Pose'}</h3>
-                                    <p className="text-xs text-secondary line-clamp-3">{pose.description || pose.prompt_text}</p>
+                                    <div>
+                                        <h3 className="font-bold text-xs uppercase mb-2 tracking-widest">{pose.category || 'Pose'}</h3>
+                                        <p className={cn("text-xs line-clamp-3 leading-relaxed", selectedPoseIds.includes(pose.id) ? "text-white/80" : "text-secondary")}>
+                                            {pose.description || pose.prompt_text}
+                                        </p>
+                                    </div>
                                     {selectedPoseIds.includes(pose.id) && (
-                                        <div className="absolute top-2 right-2 w-4 h-4 bg-primary text-white rounded-full flex items-center justify-center">
-                                            <Check size={10} />
+                                        <div className="absolute top-3 right-3">
+                                            <Check size={14} />
                                         </div>
                                     )}
                                 </div>
@@ -243,12 +279,12 @@ export default function CreatePage() {
                     )}
 
                     {error && (
-                        <div className="text-red-500 text-sm text-center bg-red-50 p-2 dark:bg-red-900/20">
+                        <div className="text-red-500 text-sm text-center border border-red-200 bg-red-50 p-4">
                             {error}
                         </div>
                     )}
 
-                    <div className="flex justify-center gap-4 pt-4">
+                    <div className="flex justify-center gap-6 pt-8">
                         <button
                             onClick={() => setStep(1)}
                             className="btn-secondary w-32"
@@ -259,7 +295,7 @@ export default function CreatePage() {
                         <button
                             onClick={generateImage}
                             disabled={isGenerating || (selectedPoseIds.length > 0 && selectedPoseIds.length < 4)}
-                            className="btn-primary w-64 flex items-center justify-center gap-2"
+                            className="btn-primary w-64 flex items-center justify-center gap-3"
                         >
                             {isGenerating ? (
                                 <>
@@ -275,21 +311,21 @@ export default function CreatePage() {
             )}
 
             {step === 3 && resultImage && (
-                <div className="space-y-8 text-center animate-in zoom-in duration-500">
-                    <div className="space-y-2">
-                        <h2 className="text-3xl font-black">YOUR K4CUT</h2>
-                        <p className="text-secondary">Capture complete!</p>
+                <div className="space-y-12 text-center animate-in zoom-in duration-500">
+                    <div className="space-y-4">
+                        <h2 className="text-4xl font-black uppercase tracking-tight">Your K4CUT</h2>
+                        <p className="text-secondary">생성 완료!</p>
                     </div>
 
-                    <div className="max-w-md mx-auto bg-white p-4 shadow-2xl skew-y-1 transform transition-transform hover:skew-y-0 duration-500">
+                    <div className="max-w-md mx-auto bg-white p-4 shadow-xl border border-border">
                         <Image src={resultImage} alt="Generated Result" width={1000} height={1500} unoptimized className="w-full h-auto block" />
                     </div>
 
-                    <div className="flex justify-center gap-4 pt-8">
+                    <div className="flex justify-center gap-6 pt-8">
                         <a
                             href={resultImage}
                             download={`k4cut-${Date.now()}.jpg`}
-                            className="btn-primary flex items-center gap-2 px-8 py-3"
+                            className="btn-primary flex items-center gap-2"
                         >
                             <Download size={18} />
                             DOWNLOAD
@@ -308,10 +344,10 @@ export default function CreatePage() {
                         </button>
                     </div>
 
-                    <div className="pt-4">
+                    <div className="pt-8 border-t border-border mt-12 w-full max-w-md mx-auto">
                         <button
                             onClick={() => router.push('/gallery')}
-                            className="text-sm text-secondary hover:text-primary underline"
+                            className="text-sm font-bold tracking-widest hover:text-secondary uppercase"
                         >
                             Go to Gallery
                         </button>
