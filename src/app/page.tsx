@@ -11,78 +11,88 @@ import Link from 'next/link';
  */
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] text-center space-y-20 animate-in fade-in zoom-in duration-500 py-20">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] text-center space-y-24 animate-in fade-in zoom-in duration-500 py-20 pb-40">
 
-      {/* Hero Section: 서비스의 메인 타이틀과 슬로건을 표시 */}
-      <div className="space-y-8 max-w-4xl mx-auto px-4">
-        {/* 로고 타이틀 */}
+      {/* Hero Section */}
+      <div className="space-y-12 max-w-5xl mx-auto px-4 w-full">
         <div className="relative inline-block">
-          <h1 className="text-7xl md:text-9xl font-black tracking-tighter leading-none select-none">
+          <h1 className="text-6xl md:text-[10rem] font-black tracking-tighter leading-none select-none text-foreground">
             K4CUT
           </h1>
-          {/* 타이틀 하단 장식 라인 */}
-          <div className="absolute -bottom-2 md:-bottom-4 left-0 w-full h-1 md:h-2 bg-foreground"></div>
+          <div className="absolute -bottom-4 md:-bottom-8 left-0 w-full h-1 md:h-2 bg-foreground"></div>
         </div>
 
-        {/* 슬로건 및 설명 */}
-        <div className="space-y-4">
-          <h2 className="text-2xl md:text-4xl font-bold tracking-tight">
-            "당신의 순간, AI가 그리다."
+        <div className="space-y-6 pt-8">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
+            당신의 순간, AI가 그리다.
           </h2>
-          <p className="text-lg md:text-xl font-light text-secondary mx-auto tracking-wide leading-relaxed break-keep">
-            스튜디오에 가지 않아도 괜찮습니다. 내 사진을 업로드하고 원하는 포즈 테마를 선택하세요.<br className="hidden md:block" />
-            최신 AI 기술이 당신의 이미지를 분석하여 자연스럽고 개성 넘치는 4분할 사진을 즉시 생성해 드립니다.
+          <p className="text-lg md:text-xl font-light text-secondary mx-auto tracking-wide leading-relaxed keep-all max-w-4xl">
+            스튜디오에 가지 않아도 괜찮습니다.<br className="block md:hidden cr-mobile-break" />
+            내 사진을 업로드하고<br className="block md:hidden" /> 원하는 포즈 테마를 선택하세요.
+            <br className="hidden md:block" />
+            <span className="block h-4 md:hidden" />
+            최신 AI 기술이 당신의 이미지를 분석하여<br className="block md:hidden" />
+            자연스럽고 개성 넘치는<br className="block md:hidden" /> 네컷사진을 생성해 드립니다.
           </p>
         </div>
       </div>
 
-      {/* CTA (Call to Action) Buttons: 생성 페이지와 갤러리 페이지로 이동하는 버튼 */}
-      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm mx-auto">
+      {/* CTA Buttons */}
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-[80%] sm:w-full max-w-md mx-auto">
         <Link
           href="/create"
-          className="btn-primary text-center py-4 text-base tracking-[0.2em] font-bold hover:scale-105 transition-transform duration-300"
+          className="btn-primary text-center py-4 md:py-5 text-base md:text-lg flex-1 shadow-none transition-all hover:bg-secondary/10 hover:text-primary border hover:border-primary"
         >
           START NOW
         </Link>
         <Link
           href="/gallery"
-          className="btn-secondary text-center py-4 text-base tracking-[0.2em] font-bold hover:scale-105 transition-transform duration-300"
+          className="btn-secondary text-center py-4 md:py-5 text-base md:text-lg flex-1"
         >
           GALLERY
         </Link>
       </div>
 
-      {/* How it Works Section: 서비스 이용 방법 4단계 안내 */}
-      <div className="w-full max-w-5xl mx-auto px-4 mt-12">
-        <h3 className="text-2xl font-bold mb-10 tracking-widest border-b border-foreground/10 pb-4 inline-block">HOW IT WORKS</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-left">
-          {/* Step 1: Upload */}
-          <div className="space-y-2 p-4 border border-foreground/5 hover:border-foreground/20 transition-colors bg-secondary/5">
-            <h4 className="font-black text-xl">01. Upload</h4>
-            <p className="text-sm text-secondary break-keep">얼굴이 잘 나온 사진을 업로드하세요.</p>
-          </div>
-          {/* Step 2: Select */}
-          <div className="space-y-2 p-4 border border-foreground/5 hover:border-foreground/20 transition-colors bg-secondary/5">
-            <h4 className="font-black text-xl">02. Select</h4>
-            <p className="text-sm text-secondary break-keep">원하는 분위기와 포즈 테마를 선택하세요.</p>
-          </div>
-          {/* Step 3: Generate */}
-          <div className="space-y-2 p-4 border border-foreground/5 hover:border-foreground/20 transition-colors bg-secondary/5">
-            <h4 className="font-black text-xl">03. Generate</h4>
-            <p className="text-sm text-secondary break-keep">AI가 당신을 주인공으로 한 네 컷 사진을 생성합니다.</p>
-          </div>
-          {/* Step 4: Keep */}
-          <div className="space-y-2 p-4 border border-foreground/5 hover:border-foreground/20 transition-colors bg-secondary/5">
-            <h4 className="font-black text-xl">04. Keep</h4>
-            <p className="text-sm text-secondary break-keep">완성된 사진을 다운로드하고 공유하세요.</p>
+      {/* How it Works Section */}
+      <div className="w-full container-custom mt-20">
+        <div className="border-t border-b border-border py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 text-center md:text-left">
+            <div className="space-y-4">
+              <span className="text-5xl font-black text-primary">01</span>
+              <div>
+                <h4 className="font-bold text-xl mb-2">UPLOAD</h4>
+                <p className="text-sm text-secondary break-keep">얼굴이 잘 나온 사진을 업로드하세요.</p>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <span className="text-5xl font-black text-primary">02</span>
+              <div>
+                <h4 className="font-bold text-xl mb-2">SELECT</h4>
+                <p className="text-sm text-secondary break-keep">원하는 분위기와 포즈 테마를 선택하세요.</p>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <span className="text-5xl font-black text-primary">03</span>
+              <div>
+                <h4 className="font-bold text-xl mb-2">GENERATE</h4>
+                <p className="text-sm text-secondary break-keep">AI가 당신을 주인공으로 한 네 컷 사진을 생성합니다.</p>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <span className="text-5xl font-black text-primary">04</span>
+              <div>
+                <h4 className="font-bold text-xl mb-2">KEEP</h4>
+                <p className="text-sm text-secondary break-keep">완성된 사진을 다운로드하고 공유하세요.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Disclaimer: 법적 고지 및 데이터 사용 안내 */}
-      <div className="max-w-3xl mx-auto px-4 mt-20 text-xs text-secondary/50 break-keep border-t border-foreground/5 pt-8">
+      {/* Disclaimer */}
+      <div className="max-w-3xl mx-auto px-4 text-xs text-secondary/40 break-keep">
         <p>
-          "K-4CUT은 AI 이미지 생성을 위해 사용자의 사진을 활용합니다. 업로드된 사진은 이미지 생성 목적 이외에는 사용되지 않으며, 타인의 사진을 무단으로 사용할 경우 법적 책임을 질 수 있습니다."
+          "K4CUT은 AI 이미지 생성을 위해 사용자의 사진을 활용합니다. 업로드된 사진은 이미지 생성 목적 이외에는 사용되지 않으며, 타인의 사진을 무단으로 사용할 경우 법적 책임은 사용자에게 있습니다."
         </p>
       </div>
     </div>

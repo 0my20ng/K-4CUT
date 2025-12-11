@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('accessToken', data.access_token);
         localStorage.setItem('refreshToken', data.refresh_token);
         refreshUser();
-        router.push('/gallery'); // 로그인 후 갤러리로 이동
+        router.push('/'); // Redirect to home after login
     };
 
     /**

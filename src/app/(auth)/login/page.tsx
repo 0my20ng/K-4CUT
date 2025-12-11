@@ -46,7 +46,15 @@ export default function LoginPage() {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const error = err as any;
             console.error(error);
-            setError(error.response?.data?.detail || '로그인에 실패했습니다. 정보를 확인해주세요.');
+            let errorMessage = '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.';
+            if (error.response?.data?.detail) {
+                if (Array.isArray(error.response.data.detail)) {
+                    errorMessage = error.response.data.detail.map((e: any) => e.msg).join(', ');
+                } else if (typeof error.response.data.detail === 'string') {
+                    errorMessage = error.response.data.detail;
+                }
+            }
+            setError(errorMessage);
         } finally {
             setIsLoading(false);
         }

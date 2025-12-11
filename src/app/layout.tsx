@@ -39,16 +39,17 @@ export default function RootLayout({
         <AuthProvider>
           {/* 모든 페이지 상단에 표시될 헤더 */}
           <Header />
-
-          {/* 메인 컨텐츠 영역: flex-1을 사용하여 남은 공간을 모두 차지하도록 함 */}
-          <div className="flex-1">
-            {children}
+          <div className="flex-1 flex flex-col items-center w-full">
+            <main className="w-full flex-1">
+              {children}
+            </main>
           </div>
-
-          {/* 공통 푸터 */}
-          <footer className="py-8 border-t border-secondary/10">
-            <div className="container-custom text-center text-xs text-secondary font-mono">
-              © 2024 K4CUT. All rights reserved.
+          <footer className="py-12 border-t border-border mt-auto">
+            <div className="container-custom text-center space-y-2">
+              <p className="text-secondary text-sm font-medium tracking-wide">K4CUT STUDIO</p>
+              <p className="text-xs text-secondary/60 font-mono">
+                © 2025 K4CUT. All rights reserved.
+              </p>
             </div>
           </footer>
         </AuthProvider>
