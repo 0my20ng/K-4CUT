@@ -17,7 +17,7 @@ const videoConstraints = {
 };
 
 export default function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
-    const webcamRef = useRef<Webcam>(null);
+    const webcamRef = useRef<any>(null);
     const [imgSrc, setImgSrc] = useState<string | null>(null);
 
     const capture = useCallback(() => {
