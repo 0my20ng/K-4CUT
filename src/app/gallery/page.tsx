@@ -92,32 +92,30 @@ export default function GalleryPage() {
     /**
      * 이미지 다운로드 핸들러
      */
+    /**
+     * 이미지 다운로드 핸들러
+     */
     const handleDownload = async (e: React.MouseEvent, img: ImageMetadata) => {
         e.stopPropagation();
         try {
-            // Use standard fetch to avoid adding Authorization headers (which trigger CORS preflight failure on R2)
-            const response = await fetch(img.url, {
-                method: 'GET',
-                // mode: 'cors', // Default is cors, we need it to read the blob
-            });
+            // Base64 인코딩된 이미지 데이터를 API로부터 받아옵니다.
+            const response = await api.get(`/api/v1/images/${img.id}/base64`);
+            const { base64_data, filename } = response.data;
 
-            if (!response.ok) throw new Error('Network response was not ok');
-            const blob = await response.blob();
+            // Data URI를 Blob으로 변환하여 다운로드 링크 생성
+            const blob = await fetch(base64_data).then(res => res.blob());
             const url = window.URL.createObjectURL(blob);
+
             const link = document.createElement('a');
             link.href = url;
-            link.download = `k4cut-${img.id}.${img.format?.toLowerCase() || 'jpg'}`;
+            link.download = filename || `k4cut-${img.id}.jpg`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error('Download failed', error);
-            alert('다운로드에 실패했습니다. (CORS 보안 정책으로 인해 브라우저에서 직접 다운로드가 차단되었습니다)');
-
-            // As a last resort fallback if blob fetch fails completely (strict CORS):
-            // We can try opening in new window but user dislikes "redirect".
-            // For now, let's stick to alert + console error so we know if it persists.
+            alert('다운로드에 실패했습니다. 관리자에게 문의해주세요.');
         }
     };
 
