@@ -10,7 +10,8 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, CreditCard, Zap } from 'lucide-react';
+import api from '@/lib/api';
 
 /**
  * Header 컴포넌트
@@ -54,6 +55,9 @@ export default function Header() {
 
                             {user ? (
                                 <div className="flex items-center gap-4">
+                                    {/* Credit Display */}
+                                    <CreditDisplay user={user} />
+
                                     <span className="text-xs font-mono text-primary font-bold">
                                         {(user.username || user.email)}
                                     </span>
@@ -101,6 +105,11 @@ export default function Header() {
                                         <span className="text-sm font-mono text-secondary mb-4">
                                             {(user.username || user.email)}
                                         </span>
+                                        {/* Mobile Credit Display */}
+                                        <div className="flex items-center gap-2 text-xl font-bold uppercase tracking-widest mb-2">
+                                            <span>Credits: {user.credits || 0}</span>
+                                        </div>
+
                                         <Link href="/mypage" className="text-xl font-bold uppercase tracking-widest hover:text-secondary transition-colors">
                                             MY PAGE
                                         </Link>
@@ -127,5 +136,78 @@ export default function Header() {
                 )}
             </div>
         </header>
+    );
+}
+
+function CreditDisplay({ user }: { user: any }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [subscription, setSubscription] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
+
+    const handleToggle = () => {
+        if (!isOpen) {
+            setLoading(true);
+            api.get('/api/v1/payments/subscriptions')
+                .then(res => {
+                    if (res.data.subscriptions && res.data.subscriptions.length > 0) {
+                        setSubscription(res.data.subscriptions[0]);
+                    } else {
+                        setSubscription(null);
+                    }
+                })
+                .catch(err => console.error(err))
+                .finally(() => setLoading(false));
+        }
+        setIsOpen(!isOpen);
+    };
+
+    return (
+        <div className="relative">
+            <button
+                onClick={handleToggle}
+                className="flex items-center gap-2 bg-secondary/10 hover:bg-secondary/20 transition-colors px-3 py-1.5 rounded-full"
+            >
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <span className="text-sm font-black font-mono tracking-tighter">{user.credits || 0}</span>
+                <span className="text-[10px] font-bold text-secondary uppercase">CRD</span>
+            </button>
+
+            {isOpen && (
+                <>
+                    <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+                    <div className="absolute top-full left-0 mt-2 w-64 bg-background border border-border p-4 shadow-xl z-50 animate-in fade-in zoom-in duration-200">
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between pb-2 border-b border-border">
+                                <span className="text-xs font-bold uppercase text-secondary">My Wallet</span>
+                                <span className="text-xl font-black">{user.credits || 0}</span>
+                            </div>
+
+                            <div className="space-y-2">
+                                <span className="text-xs font-bold uppercase text-secondary block">Subscription</span>
+                                {loading ? (
+                                    <div className="text-xs text-secondary animate-pulse">Loading...</div>
+                                ) : subscription ? (
+                                    <div className="bg-secondary/5 p-2 border border-border">
+                                        <p className="font-bold text-sm text-primary">{subscription.product_name}</p>
+                                        <p className="text-[10px] text-secondary uppercase">{subscription.status}</p>
+                                    </div>
+                                ) : (
+                                    <p className="text-xs text-secondary/60">구독 중인 상품이 없습니다.</p>
+                                )}
+                            </div>
+
+                            <Link
+                                href="/payment"
+                                onClick={() => setIsOpen(false)}
+                                className="flex items-center justify-center gap-2 w-full py-2 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors"
+                            >
+                                <Zap size={12} />
+                                Recharge Credits
+                            </Link>
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
     );
 }

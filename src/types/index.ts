@@ -12,6 +12,7 @@ export interface User {
     is_active: boolean;
     is_superuser: boolean;
     created_at: string;
+    credits?: number; // 임시 크레딧 필드 (API 미지원 시 Mocking용)
 }
 
 // 인증 응답 데이터 인터페이스
@@ -39,4 +40,30 @@ export interface ImageMetadata {
     description?: string;
     updated_at?: string;
     user_id?: string;
+}
+
+// 상품 정보 인터페이스
+export interface Product {
+    id: string;
+    name: string;
+    description?: string;
+    is_recurring: boolean;
+    is_archived: boolean;
+    prices?: any[]; // 상세 가격 정보는 필요 시 타입 구체화
+}
+
+// 구독 정보 인터페이스
+export interface Subscription {
+    id: string;
+    status: string;
+    product_id?: string;
+    product_name?: string;
+    current_period_end?: string;
+    cancel_at_period_end: boolean;
+}
+
+// 체크아웃 응답 인터페이스
+export interface CheckoutResponse {
+    checkout_url: string;
+    checkout_id?: string;
 }

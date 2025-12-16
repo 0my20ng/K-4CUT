@@ -4,6 +4,9 @@
  * 서비스 소개(Hero Section), 시작하기 버튼(CTA), 사용 방법(How it Works), 면책 조항 등을 포함합니다.
  */
 
+"use client";
+
+
 import Link from 'next/link';
 
 /**
@@ -98,3 +101,4 @@ export default function Home() {
     </div>
   );
 }
+

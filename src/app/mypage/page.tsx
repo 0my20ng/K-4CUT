@@ -11,7 +11,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import api from '@/lib/api'; // 백엔드 API
 import Modal from '@/components/ui/Modal'; // 공통 모달 컴포넌트
-import { Trash2, Lock } from 'lucide-react'; // 아이콘
+import { Subscription } from '@/types'; // 타입 추가
+import { Trash2, Lock, CreditCard } from 'lucide-react'; // 아이콘 추가
 
 /**
  * MyPage 컴포넌트
@@ -19,6 +20,11 @@ import { Trash2, Lock } from 'lucide-react'; // 아이콘
 export default function MyPage() {
     const { user, logout, loading, isAuthenticated } = useAuth();
     const router = useRouter();
+
+    // 구독 정보 상태 관리
+    const [subscription, setSubscription] = useState<Subscription | null>(null);
+    const [loadingSub, setLoadingSub] = useState(true);
+
     // 회원 탈퇴 모달 상태 관리
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -36,6 +42,20 @@ export default function MyPage() {
             router.push('/login');
         }
     }, [loading, isAuthenticated, router]);
+
+    // 구독 정보 불러오기
+    useEffect(() => {
+        if (user) {
+            api.get('/api/v1/payments/subscriptions')
+                .then(res => {
+                    if (res.data.subscriptions && res.data.subscriptions.length > 0) {
+                        setSubscription(res.data.subscriptions[0]);
+                    }
+                })
+                .catch(err => console.error(err))
+                .finally(() => setLoadingSub(false));
+        }
+    }, [user]);
 
     // 로딩 상태 UI
     if (loading) {
@@ -127,6 +147,46 @@ export default function MyPage() {
                         <h2 className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Email</h2>
                         <div className="p-4 bg-secondary/5 border border-border text-lg font-mono">
                             {user.email}
+                        </div>
+                    </div>
+
+                    {/* 구독 정보 섹션 */}
+                    <div>
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Subscription</h2>
+                        <div className="p-4 bg-secondary/5 border border-border">
+                            {loadingSub ? (
+                                <div className="text-sm text-secondary animate-pulse">Loading subscription info...</div>
+                            ) : subscription ? (
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <span className="text-lg font-bold text-primary block">{subscription.product_name || 'Standard Plan'}</span>
+                                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${subscription.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                                                {subscription.status.toUpperCase()}
+                                            </span>
+                                        </div>
+                                        <CreditCard className="w-5 h-5 text-secondary" />
+                                    </div>
+                                    <div className="text-sm text-secondary space-y-1">
+                                        {subscription.current_period_end && (
+                                            <p>다음 결제일: <span className="font-mono text-foreground">{new Date(subscription.current_period_end).toLocaleDateString()}</span></p>
+                                        )}
+                                        {subscription.cancel_at_period_end && (
+                                            <p className="text-red-500 text-xs mt-1">※ 현 결제 주기 종료 후 해지됩니다.</p>
+                                        )}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="flex items-center justify-between">
+                                    <span className="text-secondary text-sm">구독 중인 상품이 없습니다.</span>
+                                    <button
+                                        onClick={() => router.push('/payment')}
+                                        className="text-xs font-bold uppercase underline hover:text-primary transition-colors"
+                                    >
+                                        Upgrade Now
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
 
