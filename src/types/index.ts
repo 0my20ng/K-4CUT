@@ -67,3 +67,29 @@ export interface CheckoutResponse {
     checkout_url: string;
     checkout_id?: string;
 }
+
+// 주문 정보 인터페이스
+export interface Order {
+    id: string;
+    product_id?: string;
+    amount?: number;
+    currency?: string;
+    status?: string;
+    created_at?: string;
+}
+
+// 환불 요청 인터페이스
+export interface RefundRequest {
+    id: string;
+    order_id?: string;
+    product_name?: string;
+    amount?: number;
+    currency: string;
+    reason: string;
+    reason_detail?: string;
+    status: string; // pending, approved, rejected, processing, completed, failed
+    created_at: string;
+    processed_at?: string;
+    admin_note?: string;
+    rejected_reason?: string;
+}

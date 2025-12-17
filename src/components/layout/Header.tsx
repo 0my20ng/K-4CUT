@@ -12,6 +12,7 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Menu, X, CreditCard, Zap } from 'lucide-react';
 import api from '@/lib/api';
+import { cn } from '@/lib/utils';
 
 /**
  * Header 컴포넌트
@@ -83,6 +84,13 @@ export default function Header() {
                             )}
                         </nav>
 
+                        {/* Mobile Credit Display (Next to Hamburger) */}
+                        {user && (
+                            <div className="md:hidden mr-1">
+                                <CreditDisplay user={user} align="right" />
+                            </div>
+                        )}
+
                         {/* Mobile Menu Button */}
                         <button onClick={toggleMenu} className="md:hidden z-50 p-2 text-primary">
                             {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
@@ -105,10 +113,6 @@ export default function Header() {
                                         <span className="text-sm font-mono text-secondary mb-4">
                                             {(user.username || user.email)}
                                         </span>
-                                        {/* Mobile Credit Display */}
-                                        <div className="flex items-center gap-2 text-xl font-bold uppercase tracking-widest mb-2">
-                                            <span>Credits: {user.credits || 0}</span>
-                                        </div>
 
                                         <Link href="/mypage" className="text-xl font-bold uppercase tracking-widest hover:text-secondary transition-colors">
                                             MY PAGE
@@ -139,7 +143,7 @@ export default function Header() {
     );
 }
 
-function CreditDisplay({ user }: { user: any }) {
+function CreditDisplay({ user, align = 'left' }: { user: any, align?: 'left' | 'right' }) {
     const [isOpen, setIsOpen] = useState(false);
     const [subscription, setSubscription] = useState<any>(null);
     const [loading, setLoading] = useState(false);
@@ -175,7 +179,10 @@ function CreditDisplay({ user }: { user: any }) {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-                    <div className="absolute top-full left-0 mt-2 w-64 bg-background border border-border p-4 shadow-xl z-50 animate-in fade-in zoom-in duration-200">
+                    <div className={cn(
+                        "absolute top-full mt-2 w-64 bg-background border border-border p-4 shadow-xl z-50 animate-in fade-in zoom-in duration-200",
+                        align === 'right' ? "right-0" : "left-0"
+                    )}>
                         <div className="space-y-4">
                             <div className="flex items-center justify-between pb-2 border-b border-border">
                                 <span className="text-xs font-bold uppercase text-secondary">My Wallet</span>
