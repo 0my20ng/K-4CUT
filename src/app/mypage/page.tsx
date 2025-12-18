@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import api from '@/lib/api'; // 백엔드 API
 import Modal from '@/components/ui/Modal'; // 공통 모달 컴포넌트
 import { Subscription } from '@/types'; // 타입 추가
-import { Trash2, Lock, CreditCard } from 'lucide-react'; // 아이콘 추가
+import { Trash2, Lock, CreditCard, Zap } from 'lucide-react'; // 아이콘 추가
 
 /**
  * MyPage 컴포넌트
@@ -147,6 +147,28 @@ export default function MyPage() {
                         <h2 className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Email</h2>
                         <div className="p-4 bg-secondary/5 border border-border text-lg font-mono">
                             {user.email}
+                        </div>
+                    </div>
+
+                    {/* Credit Balance Section */}
+                    <div>
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Credit Balance</h2>
+                        <div className="p-4 bg-secondary/5 border border-border flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-primary/10 rounded-full text-primary">
+                                    <Zap className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <span className="text-2xl font-black">{user.credits || 0}</span>
+                                    <span className="text-xs font-bold text-secondary uppercase ml-1">Credits</span>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => router.push('/payment')}
+                                className="px-4 py-2 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors"
+                            >
+                                Recharge
+                            </button>
                         </div>
                     </div>
 

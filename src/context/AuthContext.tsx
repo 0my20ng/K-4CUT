@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
             const response = await api.get('/api/v1/auth/me');
             // API에서 크레딧 정보를 주지 않으므로 임시로 Mocking (예: 5크레딧)
-            setUser({ ...response.data, credits: 5 });
+            setUser(response.data);
         } catch (error) {
             console.error('Failed to fetch user', error);
             // 사용자 정보 로드 실패 시 로그아웃 처리 (토큰 만료 등)

@@ -27,7 +27,7 @@ interface Pose {
  * CreatePage 컴포넌트
  */
 export default function CreatePage() {
-    const { user, loading: authLoading } = useAuth();
+    const { user, loading: authLoading, refreshUser } = useAuth();
     const router = useRouter();
     // 현재 진행 단계 관리 (1: 업로드, 2: 포즈 선택, 3: 결과 확인)
     const [step, setStep] = useState(1);
@@ -180,6 +180,8 @@ export default function CreatePage() {
                 // 결과 이미지 설정 및 단계 이동
                 setResultImage(`data:${res.data.mime_type};base64,${res.data.image_base64}`);
                 setStep(3);
+                // 크레딧 차감 반영을 위해 사용자 정보 새로고침
+                refreshUser();
             }
         } catch (err: unknown) {
             console.error(err);

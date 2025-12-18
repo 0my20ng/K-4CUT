@@ -113,7 +113,7 @@ function RefundModal({ orderId, isOpen, onClose, onSuccess }: RefundModalProps) 
 }
 
 function PaymentContent() {
-    const { user, loading: authLoading } = useAuth();
+    const { user, loading: authLoading, refreshUser } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -135,13 +135,13 @@ function PaymentContent() {
 
     // URL 쿼리 파라미터 확인
     useEffect(() => {
-        const status = searchParams.get('status');
         if (status === 'success') {
             setMessage({ type: 'success', text: '결제가 성공적으로 완료되었습니다! 크레딧이 충전되었습니다.' });
+            refreshUser();
         } else if (status === 'failure') {
             setMessage({ type: 'error', text: '결제 처리에 실패했습니다. 다시 시도해주세요.' });
         }
-    }, [searchParams]);
+    }, [searchParams, refreshUser]);
 
     // 데이터 불러오기
     useEffect(() => {
