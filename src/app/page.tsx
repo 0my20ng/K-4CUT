@@ -93,9 +93,12 @@ export default function Home() {
       </div>
 
       {/* Disclaimer */}
-      <div className="max-w-3xl mx-auto px-4 text-xs text-secondary/40 break-keep">
+      <div className="max-w-3xl mx-auto px-4 text-xs text-secondary/40 break-keep space-y-2">
         <p>
           "K4CUT은 AI 이미지 생성을 위해 사용자의 사진을 활용합니다. 업로드된 사진은 이미지 생성 목적 이외에는 사용되지 않으며, 타인의 사진을 무단으로 사용할 경우 법적 책임은 사용자에게 있습니다."
+        </p>
+        <p>
+          "본 서비스는 인공지능 기본법에 의거하여, 생성형 인공지능(AI) 기술을 통해 이미지를 생성함을 고지합니다."
         </p>
       </div>
     </div>
